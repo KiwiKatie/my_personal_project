@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Player, PlayerTraits, GameProgress
+from .models import PlayerTraits, GameProgress
 
-admin.site.register([Player, PlayerTraits, GameProgress])
+admin.site.register([PlayerTraits, GameProgress])
+# Player, 
 

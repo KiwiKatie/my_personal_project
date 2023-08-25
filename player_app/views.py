@@ -2,116 +2,100 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import Player, PlayerTraits, GameProgress
-from .serializers import PlayerSerializer, PlayerTraitsSerializer, GameProgressSerializer
-# from rest_framework import HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST
-
-
-##user Auth
-# class PlayerDetails(APIView):
-#     # permission_classes=[IsAuthenticated]
-
-#     def get(self, request):
-#         player = Player.objects.get(user=request.user)
-#         serializer = PlayerSerializer(player, many=True)
-#         return Response(serializer.data)
-    
-class PlayerDetails(APIView):
-
-    def get(self, request, player_id):
-        try:
-            player = Player.objects.get(id=player_id)
-            serializer = PlayerSerializer(player)
-            return Response(serializer.data)
-        except Player.DoesNotExist:
-            return Response({'message':'Player not found'})
-
-
-
-# class PlayerTraits(APIView):
-#     # permission_classes=[IsAuthenticated]
-
-#     def get(self, request):
-#         player = Player.objects.get(user=request.user)
-#         traits = PlayerTraits.objects.get(player=player)
-#         serializer = PlayerTraits(traits, many=True)
-#         return Response(serializer.data)
+from .models import  PlayerTraits, GameProgress
+from .serializers import  PlayerTraitsSerializer, GameProgressSerializer
+from django.contrib.auth import get_user
+import json
+from django.http import JsonResponse
 
 class PlayerTraitsView(APIView):
+    permission_classes=[IsAuthenticated]
 
-    def get(self, request, player_id):
+    def get(self, request):
         try:
-            # player = Player.objects.get(id=player_id)
-            # print(player)
-            traits = PlayerTraits.objects.get(player_id=player_id)
-            # traits = PlayerTraits.objects.all()
-            # all_trait = PlayerTraits.objects.all()
-            # print(traits)
+            traits = PlayerTraits.objects.get(user=request.user)
             serializer = PlayerTraitsSerializer(traits, many=False)
             return Response(serializer.data)
-        except Player.DoesNotExist:
+        except PlayerTraits.DoesNotExist:
             return Response({'message':'Player not found'})
         
-
-
-
-# class GameProgress(APIView):
-#     # permission_classes=[IsAuthenticated]
-
-#     def get(self, request):
-#         player = Player.objects.get(user=request.user)
-#         progress = GameProgress.objects.get(player=player)
-#         serializer = GameProgressSerializer(progress, many=True)
-#         return Response(serializer.data)
-
-#     def patch(self, request):
-#         player = Player.objects.get(user=request.user)
-#         progress = GameProgress.objects.get(player=player)
-
-#         new_health = progress.health - request.data.get('damage',0)
-#         progress.health = new_health
-
-#         new_level = progress.level + request.data.get('levels',0)
-#         progress.level=new_level
-
-#         new_section = request.data.get('new_section')
-#         if new_section is not None:
-#             progress.current_section_index = new_section
-#             progress.save()
         
-#         progress.save()
-#         serializer = GameProgressSerializer(progress)
-#         return Response(serializer.data)
+class CreatePlayerView(APIView):
+    permission_classes = [IsAuthenticated]
+        
+    def post(self, request):
+        serializer = PlayerTraitsSerializer(data=request.data)
+        print(serializer)
+        print(request.user.id)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data)
+        return Response(serializer.errors)
+    
+
+class StoryAndChoices(APIView):
+
+    def get(self, request):
+        with open('./story.json', 'r') as json_file:
+            story_data = json.load(json_file)
+        return JsonResponse(story_data)
+        
+
 
 class GameProgressView(APIView):
+    permission_classes=[IsAuthenticated]
 
-    def get(self, request, player_id):
-        try:
-            # player = Player.objects.get(id=player_id)
-            progress = GameProgress.objects.get(player_id=player_id)
+    def get(self, request):
+        try:     
+            player_traits = PlayerTraits.objects.get(user=request.user)
+            progress, _ = GameProgress.objects.get_or_create(player=player_traits)
+            print(progress)
             serializer = GameProgressSerializer(progress)
             return Response(serializer.data)
-        except Player.DoesNotExist:
-            return Response({'message':'Player not found'})
+        except PlayerTraits.DoesNotExist:
+            return Response({'message': 'Player not found'})
 
-    def patch(self, request, player_id):
-        try:    
-            player = Player.objects.get(id=player_id)
-            progress = GameProgress.objects.get(player=player)
+    def put(self, request):
+        try:
+            print(request.body)
+            player_traits = PlayerTraits.objects.get(user=request.user)
+            progress, created = GameProgress.objects.get_or_create(player=player_traits)
 
-            new_health = progress.health - request.data.get('damage',0)
+
+            damage = request.data.get('damage', 0)
+            health = request.data.get('health', progress.health) 
+
+            if damage == 0:
+                new_health = health
+            elif damage > 0:
+                new_health = progress.health - abs(damage)
+            else:
+                new_health = progress.health
             progress.health = new_health
 
-            new_level = progress.level + request.data.get('levels',0)
-            progress.level=new_level
+            level = request.data.get('level', progress.level)
+            progress.level = level 
 
-            new_section = request.data.get('new_section')
+            new_section = request.data.get('story_section')
             if new_section is not None:
-                progress.current_section_index = new_section
-                progress.save()
-            
+                progress.story_section = new_section
             progress.save()
+
             serializer = GameProgressSerializer(progress)
             return Response(serializer.data)
-        except Player.DoesNotExist:
-            return Response({'message':'Player not found'})
+        except PlayerTraits.DoesNotExist:
+            return Response({'message': 'Player not foundsssss'})
+        
+    
+    def post(self, request):
+        serializer = GameProgressSerializer(data=request.data)
+        print(serializer)
+        print(request.user.id)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+
+
+

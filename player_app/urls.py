@@ -1,11 +1,9 @@
 from django.urls import path, include
-from .views import PlayerDetails, PlayerTraitsView, GameProgress
+from .views import  PlayerTraitsView, GameProgressView, CreatePlayerView, StoryAndChoices
 
 urlpatterns = [
-#     path('profile/', PlayerDetails.as_view()),
-#     path('traits/', PlayerTraits.as_view()),
-#     path('progress/', GameProgress.as_view()),
-    path('profile/<int:player_id>/', PlayerDetails.as_view()),
-    path('traits/<int:player_id>/', PlayerTraitsView.as_view()),
-    path('progress/<int:player_id>/', GameProgress.as_view()),
- ]
+    path('traits/', PlayerTraitsView.as_view()),
+    path('progress/', GameProgressView.as_view()),
+    path('create/', CreatePlayerView.as_view()),
+    path('story/', StoryAndChoices.as_view()),
+]

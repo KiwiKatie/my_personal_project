@@ -1,0 +1,139 @@
+
+{
+  "Beginnings": [
+    {
+      "text": "You wake up to a bright and sunny day. As you step outside your house, the smell of delicious food fills the air.",
+      "choices": [
+        {
+          "text": "Explore the food festival",
+          "go_to": "food_festival"
+        },
+        {
+          "text": "Stay home",
+          "go_to": "stay_home"
+        }
+      ]
+    },
+    {
+      "id": "food_festival",
+      "text": "You wander around the food festival, sampling various treats and enjoying the vibrant atmosphere. There's a mysterious tent in the corner that seems to call to you.",
+      "choices": [
+        {
+          "text": "Enter the mysterious tent",
+          "go_to": "enter_tent"
+        },
+        {
+          "text": "Ignore the tent and continue exploring",
+          "go_to": "ignore_tent"
+        }
+      ]
+    },
+    {
+      "id": "enter_tent",
+      "text": "You step inside the tent and are greeted by a fortune teller. She gazes into her crystal ball and speaks in a mystical tone.",
+      "choices": [
+        {
+          "text": "Listen to her prophecy",
+          "requirements": {
+            "charisma": {
+              "min": 1
+            }
+          },
+          "go_to": "charisma_met"
+        },
+        {
+          "text": "Politely decline and leave the tent",
+          "go_to": "charisma_not_met",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "charisma_met",
+      "text": "Amidst dreams and stars, a mysterious path beckons, veiled in destiny's whisper. Uncover secrets seasoned with ancient tales on a radiant quest to the lost Taco Bell, where your presence reignites joy, dispelling shadows. Venture on, noble traveler. ",
+      "choices": [
+        {
+          "text": "Continue your journey",
+          "go_to": "ambushed"
+        }
+      ]
+    },
+    {
+      "id": "charisma_not_met",
+      "text": "As you leave the tent you cant help but feel a pit in your stomach. You feel empty, colors seem duller, and even food does not taste as great anymore. You head home.",
+      "go_to": "end_bad"
+    },
+    {
+      "id": "ignore_tent",
+      "text": "You continue exploring the food festival, enjoying the festivities. As the day comes to an end, you head back home. When you get home you feel a sense of dread. Why could this be?",
+      "go_to": "end_bad"
+    },
+    {
+      "id": "stay_home",
+      "text": "You decide to stay home for the day. The festival sounds tempting, but you're not in the mood.",
+      "text_after_choice": "As the day passes, you can't shake off the feeling that you missed out on something special.",
+      "go_to": "end_bad"
+    },
+    {
+      "id": "end_bad",
+      "text": "And so, you live the rest of your life in the village never to seek adventure. You cant help but wonder for the rest of your life what would life have been like if I made different choices?"
+    },
+    {
+      "id": "ambushed",
+      "text": "As the journey unfolds, an unexpected challenge arises. A group of ravenous goblins block your path, their menacing grins belying their intentions. Swiftly, you are faced with a choice that may determine your fate.",
+      "choices": [
+            {
+              "text": "Engage in battle",
+              "monsters":"goblin",
+              "go_to": "combat"
+            },
+            {
+              "text": "Turn and flee, hoping to escape the goblins' clutches and live to fight another day.",
+              "go_to": "game_over"
+            }
+                ]
+    },
+    {
+      "id": "combat",
+      "text": "The clash of weapons fills the air as you engage in a fierce battle against the goblins. Your heart races with each strike, and the outcome hangs in the balance.",
+      "choices": [
+        {
+          "text": "Punch",
+          "attack_choice": "attack1",
+          "go_to": "battle_outcome"
+      },
+      {
+          "text": "Kick",
+          "attack_choice": "attack2",
+          "go_to": "battle_outcome"
+      }
+      ]
+    },
+    {
+      "id": "battle_outcome",
+      "text": "The battle concludes, leaving you either victorious or battered. Your fate has been sealed, and the echoes of your choices reverberate through time.",
+      "choices": [
+        {
+          "text": "Continue your journey",
+          "section": "continue_journey"
+        }
+      ]
+    },
+    {
+      "id": "game_over",
+      "text": "Your efforts to escape the pursuing goblins prove futile, and you find yourself ensnared in their clutches. Your journey reaches an untimely end.",
+      "ending": true
+    },
+    {
+      "id": "go_home",
+      "text": "Walking away from the enigmatic tent, you find yourself back at home. A sense of longing tugs at your heart, as if you missed out on something important.",
+      "ending": true
+    },
+    {
+      "id": "continue_journey",
+      "text": "As the dust settles from the battle, you prepare to continue your journey. With each step, the path ahead remains uncertain, yet the fire of determination burns within.",
+      "ending": true
+    }
+  ]
+}
+
